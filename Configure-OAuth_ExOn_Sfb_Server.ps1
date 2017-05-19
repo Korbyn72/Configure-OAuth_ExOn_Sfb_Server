@@ -36,9 +36,9 @@
     Revision History
     --------------------------------------------------------------------------------
     1.0     Initial release
-	2.0     Auto-export of OAuth Cert
+    2.0     Auto-export of OAuth Cert
     2.1     Added the ability to utilize more than one Web External Url
-   
+    2.5     Added switch for OverrideAdminDomain   
 	
     .PARAMETER WebExt
 	Web External url from Skype for Business Front End Pool(s).  This will take 
@@ -48,10 +48,13 @@
 	.\Configure-OAuth_ExOn_SfB_Server.ps1
 	
 	.EXAMPLE
-    .\Configure-OAuth_ExOn_SfB_Server.ps1 -WebExt "webext.contoso.com"
+        .\Configure-OAuth_ExOn_SfB_Server.ps1 -WebExt "webext.contoso.com"
 
-    .EXAMPLE
-    .\Configure-OAuth_ExOn_SfB_Server.ps1 -WebExt "webext.contoso.com","webext2.contoso.com"
+        .EXAMPLE
+        .\Configure-OAuth_ExOn_SfB_Server.ps1 -WebExt "webext.contoso.com","webext2.contoso.com"
+	
+ 	.EXAMPLE
+	.\Configure-OAuth_ExOn_SfB_Server.ps1 -WebExt "webext.contoso.com","webext2.contoso.com" -OverrideAdminDomain "contoso.onmicrosoft.com"
 
 #>
 
@@ -59,7 +62,9 @@
 
 Param(
 	[Parameter(Mandatory=$False, ParameterSetName="Default")]
-		$WebExt
+	[string] $WebExt,
+	[parameter(Mandatory=$False, ValueFromPipelineByPropertyName = $true)]
+	[string] $OverrideAdminDomain
 ) #Param
 
 Process {
@@ -83,7 +88,14 @@ Process {
 	Write-Output "Logging into SfB Online"
 	$cred = Get-Credential
 
-	$CSSession = New-CsOnlineSession -Credential $cred 
+   	if ($OverrideAdminDomain) {
+		$CSSession = New-CsOnlineSession -Credential $cred –OverrideAdminDomain $OverrideAdminDomain
+	} else {
+		$CSSession = New-CsOnlineSession -Credential $cred 
+	}
+
+	# $CSSession = New-CsOnlineSession -Credential $cred –OverrideAdminDomain x.onmicrosoft.com
+	# $CSSession = New-CsOnlineSession -Credential $cred 
 
 	Import-PSSession $CSSession -AllowClobber 
 
