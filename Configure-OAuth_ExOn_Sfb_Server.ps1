@@ -62,7 +62,7 @@
 
 Param(
 	[Parameter(Mandatory=$False, ParameterSetName="Default")]
-	[string] $WebExt,
+		$WebExt,
 	[parameter(Mandatory=$False, ValueFromPipelineByPropertyName = $true)]
 	[string] $OverrideAdminDomain
 ) #Param
